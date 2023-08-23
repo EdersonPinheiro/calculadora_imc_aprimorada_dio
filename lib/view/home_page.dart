@@ -62,9 +62,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     SizedBox(
                       width: double.infinity,
-                      child: Text(
-                        "IMC: ${imc.resultado.toStringAsFixed(2)}"
-                      ),
+                      child: Text("IMC: ${imc.resultado.toStringAsFixed(2)}"),
                     ),
                     // Make the weight and height labels 50% width
                     SizedBox(
@@ -85,7 +83,17 @@ class _HomePageState extends State<HomePage> {
                     ),
                     Text("Classificacao: ${imc.classificacao}",
                         textAlign: TextAlign.center),
-                    Text("${imc.data}")
+                    SizedBox(
+                      width: double.infinity,
+                      child: Row(
+                        children: [
+                          Text(
+                            "Data: ${imc.data}",
+                            textAlign: TextAlign.end,
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),

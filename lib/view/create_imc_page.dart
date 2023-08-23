@@ -42,73 +42,75 @@ class _CreateImcPageState extends State<CreateImcPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFormField(
-                  onChanged: (value) {
-                    if (value.length <= 10) {
-                      // Enforce maximum length of 10 characters
-                      setState(() {
-                        nome = value;
-                        imcController.nomeController.text = nome;
-                      });
-                    }
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Nome',
-                  ),
-                ),
-                SizedBox(height: 16.0),
-                Text('Peso: ${peso.toStringAsFixed(1)} kg'),
-                Slider(
-                  value: peso,
-                  onChanged: (newValue) {
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TextFormField(
+                onChanged: (value) {
+                  if (value.length <= 10) {
+                    // Enforce maximum length of 10 characters
                     setState(() {
-                      peso = newValue;
-                      imcController.pesoController.text =
-                          peso.toStringAsFixed(2);
+                      nome = value;
+                      imcController.nomeController.text = nome;
                     });
-                  },
-                  min: 1.0,
-                  max: 200.0,
+                  }
+                },
+                decoration: InputDecoration(
+                  labelText: 'Nome',
                 ),
-                SizedBox(height: 16.0),
-                Text('Altura: ${altura.toStringAsFixed(1)} cm'),
-                Slider(
-                  value: altura,
-                  onChanged: (newValue) {
-                    setState(() {
-                      altura = newValue;
-                      imcController.alturaController.text =
-                          altura.toStringAsFixed(2);
-                    });
-                  },
-                  min: 50.0,
-                  max: 250.0,
+              ),
+              SizedBox(height: 16.0),
+              Text('Peso: ${peso.toStringAsFixed(1)} kg'),
+              Slider(
+                value: peso,
+                onChanged: (newValue) {
+                  setState(() {
+                    peso = newValue;
+                    imcController.pesoController.text = peso.toStringAsFixed(2);
+                  });
+                },
+                min: 1.0,
+                max: 200.0,
+              ),
+              SizedBox(height: 16.0),
+              Text('Altura: ${(altura / 100).toStringAsFixed(2)} m'),
+              Slider(
+                value: double.parse(altura.toStringAsFixed(2)),
+                onChanged: (newValue) {
+                  setState(() {
+                    altura = newValue;
+                    imcController.alturaController.text =
+                        altura.toStringAsFixed(2);
+                  });
+                },
+                min: 50.0,
+                max: 250.0,
+              ),
+              SizedBox(height: 16.0),
+              Text('IMC: ${calculateIMC().toStringAsFixed(2)}'),
+              Center(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        final imc = IMC(
+                            localId: Uuid().v4(),
+                            nome: imcController.nomeController.text,
+                            peso: peso,
+                            altura: altura / 100,
+                            data: DateTime.now().toString(),
+                            resultado: calculateIMC(),
+                            classificacao:
+                                imcController.resultadoController.text);
+                        imcController.saveIMCData(imc);
+                        widget.reload();
+                        Get.back();
+                      },
+                      child: Text("Salvar IMC")),
                 ),
-                SizedBox(height: 16.0),
-                Text('IMC: ${calculateIMC().toStringAsFixed(2)}'),
-                ElevatedButton(
-                    onPressed: () {
-                      final imc = IMC(
-                          localId: Uuid().v4(),
-                          nome: imcController.nomeController.text,
-                          peso: peso,
-                          altura: altura / 100,
-                          data: DateTime.now().toString(),
-                          resultado: calculateIMC(),
-                          classificacao:
-                              imcController.resultadoController.text);
-                      imcController.saveIMCData(imc);
-                      widget.reload();
-                      Get.back();
-                    },
-                    child: Text("Salvar IMC"))
-              ],
-            ),
+              )
+            ],
           ),
         ),
       ),
