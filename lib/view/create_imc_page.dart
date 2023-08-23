@@ -1,27 +1,20 @@
-// ignore_for_file: use_build_context_synchronously
-
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import '../../db/db.dart';
 import 'package:uuid/uuid.dart';
-
-import '../components/button.dart';
+import '../../db/db.dart';
 import '../imc_controllers/imc_controller.dart';
+import '../models/imc.dart';
+import 'create_imc_page.dart';
 
 class CreateImcPage extends StatefulWidget {
   final Function reload;
   const CreateImcPage({super.key, required this.reload});
+
   @override
-  _CreateProductPageState createState() => _CreateProductPageState();
+  State<CreateImcPage> createState() => _CreateImcPageState();
 }
 
-class _CreateProductPageState extends State<CreateImcPage> {
+class _CreateImcPageState extends State<CreateImcPage> {
   final db = DB();
   double peso = 50.0;
   double altura = 150.0;
@@ -56,10 +49,13 @@ class _CreateProductPageState extends State<CreateImcPage> {
               children: [
                 TextFormField(
                   onChanged: (value) {
-                    setState(() {
-                      nome = value;
-                      imcController.nomeController.text = nome;
-                    });
+                    if (value.length <= 10) {
+                      // Enforce maximum length of 10 characters
+                      setState(() {
+                        nome = value;
+                        imcController.nomeController.text = nome;
+                      });
+                    }
                   },
                   decoration: InputDecoration(
                     labelText: 'Nome',
@@ -97,9 +93,18 @@ class _CreateProductPageState extends State<CreateImcPage> {
                 Text('IMC: ${calculateIMC().toStringAsFixed(2)}'),
                 ElevatedButton(
                     onPressed: () {
-                      imcController.saveIMCData();
-                      Get.back();
+                      final imc = IMC(
+                          localId: Uuid().v4(),
+                          nome: imcController.nomeController.text,
+                          peso: peso,
+                          altura: altura / 100,
+                          data: DateTime.now().toString(),
+                          resultado: calculateIMC(),
+                          classificacao:
+                              imcController.resultadoController.text);
+                      imcController.saveIMCData(imc);
                       widget.reload();
+                      Get.back();
                     },
                     child: Text("Salvar IMC"))
               ],

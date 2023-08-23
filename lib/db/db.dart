@@ -15,7 +15,7 @@ class DB {
 
   Future<Database> initDB() async {
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, "diu");
+    String path = join(databasesPath, "diobb");
     return await openDatabase(path, version: 1, onCreate: _onCreate);
   }
 

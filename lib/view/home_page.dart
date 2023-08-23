@@ -42,42 +42,57 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Center(child: Text('Calculadora IMC')),
       ),
-      body: Obx(() => ListView.builder(
-            itemCount: imcList.length,
-            itemBuilder: (BuildContext context, int index) {
-              IMC imc = imcList[index];
-              return Padding(
-                padding: const EdgeInsets.all(3.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.grey.shade400,
-                      width: 0.5,
+      body: Obx(
+        () => ListView.builder(
+          itemCount: imcList.length,
+          itemBuilder: (BuildContext context, int index) {
+            IMC imc = imcList[index];
+            return Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Make the name and IMC labels 100% width
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "Nome: ${imc.nome}",
+                      ),
                     ),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  child: ListTile(
-                      leading: Column(
-                        crossAxisAlignment: CrossAxisAlignment
-                            .start,
+                    SizedBox(
+                      width: double.infinity,
+                      child: Text(
+                        "IMC: ${imc.resultado.toStringAsFixed(2)}"
+                      ),
+                    ),
+                    // Make the weight and height labels 50% width
+                    SizedBox(
+                      width: double.infinity,
+                      child: Row(
                         children: [
-                          Text("Nome: ${imc.nome}"),
-                          Text("Peso: ${imc.peso.toStringAsFixed(2)}"),
-                          Text("Altura: ${imc.altura.toStringAsFixed(2)}"),
+                          Text(
+                            "Peso: ${imc.peso.toStringAsFixed(2)}",
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            "Altura: ${imc.altura.toStringAsFixed(2)}m",
+                            textAlign: TextAlign.center,
+                          ),
                         ],
                       ),
-                      title: Text("IMC: ${imc.resultado.toStringAsFixed(2)}"),
-                      subtitle: Text("Classificação: ${imc.classificacao}"),
-                      onTap: () async {
-                        print(imc.toJson());
-                      },
-                      trailing: Column(
-                        children: [Text("${imc.data}")],
-                      )),
+                    ),
+                    Text("Classificacao: ${imc.classificacao}",
+                        textAlign: TextAlign.center),
+                    Text("${imc.data}")
+                  ],
                 ),
-              );
-            },
-          )),
+              ),
+            );
+          },
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Get.to(

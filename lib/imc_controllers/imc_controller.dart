@@ -10,49 +10,41 @@ class ImcController {
   final alturaController = TextEditingController();
   final dataController = TextEditingController();
   final resultadoController = TextEditingController();
+  final classificacaoController = TextEditingController();
   final db = DB();
 
-  void saveIMCData() async {
-    double? result = calculaIMC(
-        double.parse(pesoController.text), double.parse(alturaController.text));
-    resultadoController.text = result!.toStringAsFixed(2);
+  void saveIMCData(IMC imc) async {
+    final dataFormatada = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
-    String classification = getClassificacao(result);
-
-    final dataFormatada = DateFormat.MMMd().format(DateTime.now());
+    if (imc.resultado < 16) {
+      classificacaoController.text = "Magreza grave";
+    } else if (imc.resultado == 16 || imc.resultado < 17) {
+      classificacaoController.text = "Magreza moderada";
+    } else if (imc.resultado == 17 || imc.resultado < 18.5) {
+      classificacaoController.text = "Magreza leve";
+    } else if (imc.resultado == 18.5 || imc.resultado < 25) {
+      classificacaoController.text = "Saudável";
+    } else if (imc.resultado == 25 || imc.resultado < 30) {
+      classificacaoController.text = "Sobrepeso";
+    } else if (imc.resultado == 30 || imc.resultado < 35) {
+      classificacaoController.text = "Obesidade Grau I";
+    } else if (imc.resultado == 35 || imc.resultado < 40) {
+      classificacaoController.text = "Obesidade Grau II(severa)";
+    } else {
+      classificacaoController.text = "Obesidade Grau III(mórbida)";
+    }
 
     IMC imcData = IMC(
-      localId: Uuid().v4(),
-      nome: nomeController.text,
-      peso: double.parse(pesoController.text),
-      altura: double.parse(alturaController.text),
-      data: dataFormatada.toString(),
-      resultado: double.parse(result.toStringAsFixed(2)),
-      classificacao: classification,
-    );
+        localId: Uuid().v4(),
+        nome: imc.nome,
+        peso: imc.peso,
+        altura: imc.altura,
+        data: dataFormatada.toString(),
+        resultado: imc.resultado,
+        classificacao: classificacaoController.text);
 
-    db.addIMC(imcData);
+    await db.addIMC(imcData);
     print('IMC Data saved to the database.');
-  }
-
-  String getClassificacao(double resultado) {
-    if (resultado < 16) {
-      return "Magreza grave";
-    } else if (resultado < 17) {
-      return "Magreza moderada";
-    } else if (resultado < 18.5) {
-      return "Magreza leve";
-    } else if (resultado < 25) {
-      return "Saudável";
-    } else if (resultado < 30) {
-      return "Sobrepeso";
-    } else if (resultado < 35) {
-      return "Obesidade Grau I";
-    } else if (resultado < 40) {
-      return "Obesidade Grau II(severa)";
-    } else {
-      return "Obesidade Grau III(mórbida)";
-    }
   }
 
   double? calculaIMC(double peso, double altura) {
